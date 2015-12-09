@@ -1,7 +1,9 @@
 pyipa
 =====
 
+Updated by Stephen Mayhew
+
 Python module for parsing text written in the International Phonetic Alphabet (IPA)
 
-I'm working on some software for helping me with ConLanging, but I suspect that this could be useful
-more traditional academic pursuits :)
+This hasn't been worked on in a while, so I wanted to mess with it. I want to use this to
+deal with data from phoible.org

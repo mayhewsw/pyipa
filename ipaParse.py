@@ -24,18 +24,22 @@ MANNER = {"nasal": u'm̥mɱn̪n̥nn̠ɳɲ̥ɲŋ̊ŋɴ',
            "lateral_flap": u'ɺɺ̠ʎ̯'
 }
 
+DIACRITICS = u'm̥m̬mʰm̹m̜m̟m̠m̈m̽m̩m̯m˞m̤m̰m̼mʷmʲmˠmˤm̴m̝m̞m̘m̙m̪m̺m̻m̃mⁿmˡm̚'
+
+SUPRASEGMENTALS = u'mˈmˌmːmˑm̆m|m‖m.m'
+
 PLACE = {
     "labial": {
         "bilabial": u'm̥pɸmbβⱱ̟',
         "labiodental": u'p̪fɱb̪vʋⱱ'
     },
     "labio-velar": {
-        "laboio-velar": u'w'
+        "labio-velar": u'w'
     },
     "coronal": {
         "dental": u'n̪t̪d̪θð',
         "alveolar": u'n̥ntdszɹrɾɬɮlɺ',  # plus t͡s d͡z, once we have proper handling for that combining character 
-        "postlav": u'n̠ʃʒ',
+        "postalv": u'n̠ʃʒ',
         # "palatized postalv": u't͡ʃd͡ʒ',
         "retroflex": u'ɳʈɖʂʐɻɽɭ˔̊ɭɺ̠'
     },
@@ -67,8 +71,6 @@ VOICING = {
     "voiced": u'mbβʙⱱ̟ɱb̪vʋⱱn̪d̪ðndzɹrɾɮlɺn̠ʒɳɖʐɻɽɭɺ̠ɲɟʝjʎʎ̯ŋɡgɣɰʟ̝ʟɴɢʁʀɢ̆ʕʢяʡ̯ɦw'
 }
 
-
-
 BACKNESS = {
     'front': u'iyeøe̞ø̞ɛœæaɶ',
     'near-front': u'ɪʏ',
@@ -94,6 +96,15 @@ ROUNDEDNESS = {
 
 
 def CombiningCategory(c):
+    """
+    This checks if c is a combining category. Categories are listed here:
+     - http://www.unicode.org/reports/tr44/#General_Category_Values
+     - https://en.wikipedia.org/wiki/Unicode_character_property
+    In this case:
+    M* : a mark of some kind
+    Lm : a modifier letter
+    Sk : modifier symbol
+    """
     cat = unicodedata.category(c)
     return cat[0] == 'M' or cat == 'Lm' or cat == 'Sk'
 
@@ -138,6 +149,7 @@ VowelData = {}
 for v in ALL_VOWELS:
     VowelData[v] = {}
 
+
 def FillData(byGrapheme, byType, typeType):
     for t in byType.keys():
         graphemeL = GraphemeSplit(byType[t])
@@ -152,6 +164,8 @@ FillData(ConsonantData, VOICING, 'voicing')
 FillData(VowelData, BACKNESS, 'backness')
 FillData(VowelData, HEIGHT, 'height')
 FillData(VowelData, ROUNDEDNESS, 'roundedness')
+
+# swm -- past here, I can't see that anything valuable is happening.
 
 class ParserNode:
     def __init__(self, name=None):
@@ -956,5 +970,41 @@ def DoTests():
         ])
     CheckRepr(p)
 
+
+def showchar(line):
+    graphemes = GraphemeSplit(line)
+    for g in graphemes:
+        if len(g) == 2:
+            # check for diacritics
+            comb = "m" + g[1]
+            print "Comb is:",comb
+            gsd = GraphemeSplit(DIACRITICS)
+            v = comb in gsd
+            print v
+
+        if g in ConsonantData:
+            print g, ":", ConsonantData[g]
+        elif g in VowelData:
+            print g, ":", VowelData[g]
+        else:
+            print g, ": currently unknown."
+
+    
 if __name__ == '__main__':
     DoTests()
+
+    # with open("../phoible/gold-standard/phoible-phonemes.tsv") as f:
+    #     i = 0
+    #     for line in f:
+    #         if i == 0:
+    #             i += 1
+    #             continue
+    #         sline = line.split("\t")
+    #         phoneme = sline[7].decode("utf8")
+    #         showchar(phoneme)
+    #
+    #         i += 1
+    #         if i > 0:
+    #             break
+
+    showchar(DIACRITICS)

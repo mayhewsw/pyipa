@@ -51,7 +51,7 @@ def GetDictionariesPath():
     import sys
     import os
     if hasattr(sys.modules['__main__'], "__file__"):
-        basePath = path.abspath(sys.modules['__main__'].__file__)
+        basePath = os.path.dirname(os.path.abspath(sys.modules['__main__'].__file__))
     elif sys.argv[0] != '':
         basePath = os.path.dirname(sys.argv[0])
     else:
